@@ -10,6 +10,10 @@
 #include <algorithm>
 #include <list>
 
+bool fullDebugMode = false;
+
+unsigned long long nDrawCycles = 0;
+
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 
@@ -20,15 +24,15 @@ struct mesh{
     std::vector<triangle> tris; 
 
     bool LoadFromObjectFile(std::string sFilename){
-        std::cout << "Begin: LoadFromObjectFile\n";
-        std::cout << "File: " << sFilename << "\n";
+        if(fullDebugMode){std::cout << "Begin: LoadFromObjectFile\n";}
+        if(fullDebugMode){std::cout << "File: " << sFilename << "\n";}
         std::ifstream f(sFilename);
         if(!f.is_open()){ return false; }
-        std::cout << "File opened!\n";
+        if(fullDebugMode){std::cout << "File opened!\n";}
 
         // Local cache or verts
         std::vector<vec3d> verts;
-        std::cout << "Vert cache created from Object File!\n";
+        if(fullDebugMode){std::cout << "Vert cache created from Object File!\n";}
 
         while(!f.eof()){
             char line[128];
@@ -50,8 +54,8 @@ struct mesh{
             };
         }
         return true;
-        std::cout << "Vert cache filled!\n";
-        std::cout << "End: LoadFromObjectFile\n\n";
+        if(fullDebugMode){std::cout << "Vert cache filled!\n";}
+        if(fullDebugMode){std::cout << "End: LoadFromObjectFile\n\n";}
     }
 };
 struct mat4x4{ float m[4][4] = { 0 }; };
@@ -69,7 +73,7 @@ float fMouseSensitivity = 0.0025f;
 
 int windowWidth, windowHeight;
 float fTheta;
-float fNear = 2.1f;
+float fNear = 0.1f;
 float fFar = 1000.0f;
 float fFov = 90.0f;
 float fFovRad;
@@ -83,180 +87,180 @@ float deltaTime;
 bool debugModeTogggled = false;
 
 vec3d Matrix_MultiplyVector(mat4x4 &m, vec3d &i){
-    std::cout << "Begin: Matrix_MultiplyVector\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MultiplyVector\n";}
     vec3d v;
     v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
     v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + i.w * m.m[3][1];
     v.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + i.w * m.m[3][2];
     v.w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + i.w * m.m[3][3];
-    std::cout << "Function returned: \n";
-    std::cout << v.x << ", " << v.y << ", " << v.z << ", " << v.w << "!\n";
-    std::cout << "End: Matrix_MultiplyVector\n\n";
+    if(fullDebugMode){std::cout << "Function returned: \n";}
+    if(fullDebugMode){std::cout << v.x << ", " << v.y << ", " << v.z << ", " << v.w << "!\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MultiplyVector\n\n";}
     return v;
 }
 
 mat4x4 Matrix_MakeIdentity(){
-    std::cout << "Begin: Matrix_MakeIdentity\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MakeIdentity\n";}
     mat4x4 matrix;
     matrix.m[0][0] = 1.0f;
     matrix.m[1][1] = 1.0f;
     matrix.m[2][2] = 1.0f;
     matrix.m[3][3] = 1.0f;
-    std::cout << "Matrix with {1,1,1,1} applied.\n";
-    std::cout << "End: Matrix_MakeIdentity\n\n";
+    if(fullDebugMode){std::cout << "Matrix with {1,1,1,1} applied.\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MakeIdentity\n\n";}
     return matrix;
 }
 
 vec3d Vector_Add(const vec3d &v1, const vec3d &v2) {
-    std::cout << "Begin: Vector_Add\n";
-    std::cout << "Operation details: \n";
-    std::cout << "x: " << v1.x << " + " << v2.x << " = " << v1.x + v2.x << "!\n";
-    std::cout << "y: " << v1.y << " + " << v2.y << " = " << v1.y + v2.y << "!\n";
-    std::cout << "z: " << v1.z << " + " << v2.z << " = " << v1.z + v2.z << "!\n";
-    std::cout << "End: Vector_Add\n\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_Add\n";}
+    if(fullDebugMode){std::cout << "Operation details: \n";}
+    if(fullDebugMode){std::cout << "x: " << v1.x << " + " << v2.x << " = " << v1.x + v2.x << "!\n";}
+    if(fullDebugMode){std::cout << "y: " << v1.y << " + " << v2.y << " = " << v1.y + v2.y << "!\n";}
+    if(fullDebugMode){std::cout << "z: " << v1.z << " + " << v2.z << " = " << v1.z + v2.z << "!\n";}
+    if(fullDebugMode){std::cout << "End: Vector_Add\n\n";}
     return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 }
 
 vec3d Vector_Sub(const vec3d &v1, const vec3d &v2) {
-    std::cout << "Begin: Vector_Sub\n";
-    std::cout << "Operation details: \n";
-    std::cout << "x: " << v1.x << " - " << v2.x << " = " << v1.x - v2.x << "!\n";
-    std::cout << "y: " << v1.y << " - " << v2.y << " = " << v1.y - v2.y << "!\n";
-    std::cout << "z: " << v1.z << " - " << v2.z << " = " << v1.z - v2.z << "!\n";
-    std::cout << "End: Vector_Sub\n\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_Sub\n";}
+    if(fullDebugMode){std::cout << "Operation details: \n";}
+    if(fullDebugMode){std::cout << "x: " << v1.x << " - " << v2.x << " = " << v1.x - v2.x << "!\n";}
+    if(fullDebugMode){std::cout << "y: " << v1.y << " - " << v2.y << " = " << v1.y - v2.y << "!\n";}
+    if(fullDebugMode){std::cout << "z: " << v1.z << " - " << v2.z << " = " << v1.z - v2.z << "!\n";}
+    if(fullDebugMode){std::cout << "End: Vector_Sub\n\n";}
     return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
 
 vec3d Vector_Mul(const vec3d &v1, float k) {
-    std::cout << "Begin: Vector_Mul\n";
-    std::cout << "Operation Details: \n";
-    std::cout << "Float K = " << k << "!\n";
-    std::cout << "x: " << v1.x << " * " << k << " = " << v1.x * k << "!\n";
-    std::cout << "y: " << v1.y << " * " << k << " = " << v1.y * k << "!\n";
-    std::cout << "z: " << v1.z << " * " << k << " = " << v1.z * k << "!\n";
-    std::cout << "End: Vector_Mul\n\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_Mul\n";}
+    if(fullDebugMode){std::cout << "Operation Details: \n";}
+    if(fullDebugMode){std::cout << "Float K = " << k << "!\n";}
+    if(fullDebugMode){std::cout << "x: " << v1.x << " * " << k << " = " << v1.x * k << "!\n";}
+    if(fullDebugMode){std::cout << "y: " << v1.y << " * " << k << " = " << v1.y * k << "!\n";}
+    if(fullDebugMode){std::cout << "z: " << v1.z << " * " << k << " = " << v1.z * k << "!\n";}
+    if(fullDebugMode){std::cout << "End: Vector_Mul\n\n";}
     return { v1.x * k, v1.y * k, v1.z * k };
 }
 
 vec3d Vector_Div(const vec3d &v1, float k) {
-    std::cout << "Begin: Vector_Div\n";
-    std::cout << "Operation details: \n";
-    std::cout << "Float K = " << k << "!\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_Div\n";}
+    if(fullDebugMode){std::cout << "Operation details: \n";}
+    if(fullDebugMode){std::cout << "Float K = " << k << "!\n";}
     if(k != 0){
-        std::cout << "x: " << v1.x << " / " << k << " = " << v1.x / k << "!\n";
-        std::cout << "y: " << v1.y << " / " << k << " = " << v1.y / k << "!\n";
-        std::cout << "z: " << v1.z << " / " << k << " = " << v1.z / k << "!\n";
-        std::cout << "End: Vector_Div\n\n";
+        if(fullDebugMode){std::cout << "x: " << v1.x << " / " << k << " = " << v1.x / k << "!\n";}
+        if(fullDebugMode){std::cout << "y: " << v1.y << " / " << k << " = " << v1.y / k << "!\n";}
+        if(fullDebugMode){std::cout << "z: " << v1.z << " / " << k << " = " << v1.z / k << "!\n";}
+        if(fullDebugMode){std::cout << "End: Vector_Div\n\n";}
         return { v1.x / k, v1.y / k, v1.z / k };
     }else{
-        std::cout << "ERROR: DEVIDING BY ZERO";
-        std::cout << "End: Vector_Div\n\n";
+        if(fullDebugMode){std::cout << "ERROR: DEVIDING BY ZERO";}
+        if(fullDebugMode){std::cout << "End: Vector_Div\n\n";}
         return {0.0f, 0.0f, 0.0f};
     }
 }
 
 float Vector_DotProduct(const vec3d &v1, const vec3d &v2){
-    std::cout << "Begin: Vector_DotProduct\n";
-    std::cout << "Operation details: \n";
-    std::cout << "(" << v1.x << " * " << v2.x << ") + ";
-    std::cout << "(" << v1.y << " * " << v2.y << ") + ";
-    std::cout << "(" << v1.z << " * " << v2.z << ") = ";
-    std::cout << (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z) << "!\n";
-    std::cout << "End: Vector_DotProduct\n\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_DotProduct\n";}
+    if(fullDebugMode){std::cout << "Operation details: \n";}
+    if(fullDebugMode){std::cout << "(" << v1.x << " * " << v2.x << ") + ";}
+    if(fullDebugMode){std::cout << "(" << v1.y << " * " << v2.y << ") + ";}
+    if(fullDebugMode){std::cout << "(" << v1.z << " * " << v2.z << ") = ";}
+    if(fullDebugMode){std::cout << (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z) << "!\n";}
+    if(fullDebugMode){std::cout << "End: Vector_DotProduct\n\n";}
     return ( (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z) );
 }
 
 float Vector_Length(const vec3d &v){
-    std::cout << "Begin: Vector_Length\n";
-    std::cout << "Calling Vector_DotProduct() to get dot product!\n";
-    std::cout << "Operation details: \n";
-    std::cout << "sqrt(" << Vector_DotProduct(v, v) << ") = " << sqrtf(Vector_DotProduct(v, v)) << "!\n";
-    std::cout << "End: Vector_Length\n\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_Length\n";}
+    if(fullDebugMode){std::cout << "Calling Vector_DotProduct() to get dot product!\n";}
+    if(fullDebugMode){std::cout << "Operation details: \n";}
+    if(fullDebugMode){std::cout << "sqrt(" << Vector_DotProduct(v, v) << ") = " << sqrtf(Vector_DotProduct(v, v)) << "!\n";}
+    if(fullDebugMode){std::cout << "End: Vector_Length\n\n";}
     return sqrtf(Vector_DotProduct(v, v));
 }
 
 vec3d Vector_Normalise(const vec3d &v) {
-    std::cout << "Begin: Vector_Normalise\n";
-    std::cout << "Calling Vector_Length() to get Length\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_Normalise\n";}
+    if(fullDebugMode){std::cout << "Calling Vector_Length() to get Length\n";}
     float l = Vector_Length(v);
-    std::cout << "Operation details: \n";
+    if(fullDebugMode){std::cout << "Operation details: \n";}
     if(l!=0){ 
-        std::cout << "x: " << v.x << " / " <<  l << " = " << v.x / l << "!\n";
-        std::cout << "y: " << v.y << " / " <<  l << " = " << v.y / l << "!\n";
-        std::cout << "z: " << v.z << " / " <<  l << " = " << v.z / l << "!\n";
+        if(fullDebugMode){std::cout << "x: " << v.x << " / " <<  l << " = " << v.x / l << "!\n";}
+        if(fullDebugMode){std::cout << "y: " << v.y << " / " <<  l << " = " << v.y / l << "!\n";}
+        if(fullDebugMode){std::cout << "z: " << v.z << " / " <<  l << " = " << v.z / l << "!\n";}
         return { v.x / l, v.y / l, v.z / l };
-        std::cout << "End: Vector_Normalise\n\n";
+        if(fullDebugMode){std::cout << "End: Vector_Normalise\n\n";}
     }else{
-        std::cout << "ERROR: DEVIDING BY ZERO\n";
+        if(fullDebugMode){std::cout << "ERROR: DEVIDING BY ZERO\n";}
         return { 0.0f, 0.0f, 0.0f };
-        std::cout << "End: Vector_Normalise\n\n";
+        if(fullDebugMode){std::cout << "End: Vector_Normalise\n\n";}
     }
 }
 
 vec3d Vector_CrossProduct(const vec3d &v1, const vec3d &v2){
-    std::cout << "Begin: Vector_CrossProduct\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_CrossProduct\n";}
     vec3d v;
-    std::cout << "Created Vector3D v\n";
+    if(fullDebugMode){std::cout << "Created Vector3D v\n";}
     v.x = v1.y * v2.z - v1.z * v2.y;
     v.y = v1.z * v2.x - v1.x * v2.z;
     v.z = v1.x * v2.y - v1.y * v2.x;
-    std::cout << "Operation Details: \n";
-    std::cout << "x: " << v1.y << " * " << v2.z << " - " << v1.z << " * " << v2.y << " = " << v1.y * v2.z - v1.z * v2.y << "!\n";
-    std::cout << "y: " << v1.z << " * " << v2.x << " - " << v1.x << " * " << v2.z << " = " << v1.z * v2.x - v1.x * v2.z << "!\n";
-    std::cout << "z: " << v1.x << " * " << v2.y << " - " << v1.y << " * " << v2.x << " = " << v1.x * v2.y - v1.y * v2.x << "!\n";
-    std::cout << "End: Vector_CrossProduct\n\n";
+    if(fullDebugMode){std::cout << "Operation Details: \n";}
+    if(fullDebugMode){std::cout << "x: " << v1.y << " * " << v2.z << " - " << v1.z << " * " << v2.y << " = " << v1.y * v2.z - v1.z * v2.y << "!\n";}
+    if(fullDebugMode){std::cout << "y: " << v1.z << " * " << v2.x << " - " << v1.x << " * " << v2.z << " = " << v1.z * v2.x - v1.x * v2.z << "!\n";}
+    if(fullDebugMode){std::cout << "z: " << v1.x << " * " << v2.y << " - " << v1.y << " * " << v2.x << " = " << v1.x * v2.y - v1.y * v2.x << "!\n";}
+    if(fullDebugMode){std::cout << "End: Vector_CrossProduct\n\n";}
     return v;
 }
 
 mat4x4 Matrix_MakeRotationX(float fAngleRad){
-    std::cout << "Begin: Matrix_MakeRotationX\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MakeRotationX\n";}
     mat4x4 matrix;
-    std::cout << "Made mat4x4 matrix\n";
+    if(fullDebugMode){std::cout << "Made mat4x4 matrix\n";}
     matrix.m[0][0] = 1.0f;
     matrix.m[1][1] = cosf(fAngleRad);
     matrix.m[1][2] = sinf(fAngleRad);
     matrix.m[2][1] = -sinf(fAngleRad);
     matrix.m[2][2] = cosf(fAngleRad);
     matrix.m[3][3] = 1.0f;
-    std::cout << "Filled matrix\n";
-    std::cout << "End: Matrix_MakeRotationX\n\n";
+    if(fullDebugMode){std::cout << "Filled matrix\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MakeRotationX\n\n";}
     return matrix;
 }
 
 mat4x4 Matrix_MakeRotationY(float fAngleRad){
-    std::cout << "Begin: Matrix_MakeRotationY\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MakeRotationY\n";}
     mat4x4 matrix;
-    std::cout << "Made mat4x4 matrix\n";
+    if(fullDebugMode){std::cout << "Made mat4x4 matrix\n";}
     matrix.m[0][0] = cosf(fAngleRad);
     matrix.m[0][2] = sinf(fAngleRad);
     matrix.m[2][0] = -sinf(fAngleRad);
     matrix.m[1][1] = 1.0f;
     matrix.m[2][2] = cosf(fAngleRad);
     matrix.m[3][3] = 1.0f;
-    std::cout << "Filled Matrix\n";
-    std::cout << "End: Matrix_MakeRotationY\n\n";
+    if(fullDebugMode){std::cout << "Filled Matrix\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MakeRotationY\n\n";}
     return matrix;
 }
 
 mat4x4 Matrix_MakeRotationZ(float fAngleRad){
-    std::cout << "Begin: Matrix_MakeRotationZ\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MakeRotationZ\n";}
     mat4x4 matrix;
-    std::cout << "Made mat4x4 matrix\n";
+    if(fullDebugMode){std::cout << "Made mat4x4 matrix\n";}
     matrix.m[0][0] = cosf(fAngleRad);
     matrix.m[0][1] = sinf(fAngleRad);
     matrix.m[1][0] = -sinf(fAngleRad);
     matrix.m[1][1] = cosf(fAngleRad);
     matrix.m[2][2] = 1.0f;
     matrix.m[3][3] = 1.0f;
-    std::cout << "Filled matrix\n";
-    std::cout << "End: Matrix_MakeRotationZ\n\n";
+    if(fullDebugMode){std::cout << "Filled matrix\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MakeRotationZ\n\n";}
     return matrix;
 }
 
 mat4x4 Matrix_MakeTranslation(float x, float y, float z){
-    std::cout << "Begin: Matrix_MakeTranslation\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MakeTranslation\n";}
     mat4x4 matrix;
-    std::cout << "Made mat4x4 matrix\n";
+    if(fullDebugMode){std::cout << "Made mat4x4 matrix\n";}
     matrix.m[0][0] = 1.0f;
     matrix.m[1][1] = 1.0f;
     matrix.m[2][2] = 1.0f;
@@ -264,17 +268,17 @@ mat4x4 Matrix_MakeTranslation(float x, float y, float z){
     matrix.m[3][0] = x;
     matrix.m[3][1] = y;
     matrix.m[3][2] = z;
-    std::cout << "Filled matrix\n";
-    std::cout << "End: Matrix_MakeTranslation\n\n";
+    if(fullDebugMode){std::cout << "Filled matrix\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MakeTranslation\n\n";}
     return matrix;
 }
 
 mat4x4 Matrix_MakeProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar){
-    std::cout << "Begin: Matrix_MakeProjection\n";
-    std::cout << "Inputs: \nfFovDegrees: " << fFovDegrees << "\nfAspectRatio: " << fAspectRatio << "\nfNear: " << fNear << "\nfFar: " << fFar;
+    if(fullDebugMode){std::cout << "Begin: Matrix_MakeProjection\n";}
+    if(fullDebugMode){std::cout << "Inputs: \nfFovDegrees: " << fFovDegrees << "\nfAspectRatio: " << fAspectRatio << "\nfNear: " << fNear << "\nfFar: " << fFar;}
     float fFovRad = 1.0f / tanf(fFovDegrees * 0.5f / 180.0f * 3.14159f);
-    std::cout << "Calculation: fFovRad: " << fFovRad << "!\n";
-    std::cout << "Made mat4x4 matrix\n";
+    if(fullDebugMode){std::cout << "Calculation: fFovRad: " << fFovRad << "!\n";}
+    if(fullDebugMode){std::cout << "Made mat4x4 matrix\n";}
     mat4x4 matrix;
     matrix.m[0][0] = fAspectRatio * fFovRad;
     matrix.m[1][1] = fFovRad;
@@ -282,26 +286,26 @@ mat4x4 Matrix_MakeProjection(float fFovDegrees, float fAspectRatio, float fNear,
     matrix.m[3][2] = (-fFar * fNear) / (fFar - fNear);
     matrix.m[2][3] = 1.0f;
     matrix.m[3][3] = 0.0f;
-    std::cout << "Filled matrix\n";
-    std::cout << "End: Matrix_MakeProjection\n\n";
+    if(fullDebugMode){std::cout << "Filled matrix\n";}
+    if(fullDebugMode){std::cout << "End: Matrix_MakeProjection\n\n";}
     return matrix;
 }
 
 mat4x4 Matrix_MultiplyMatrix(mat4x4 &m1, mat4x4 &m2){
-    std::cout << "Begin: Matrix_MultiplyMatrix\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_MultiplyMatrix\n";}
     mat4x4 matrix;
-    std::cout << "Made mat4x4 matrix\n";
+    if(fullDebugMode){std::cout << "Made mat4x4 matrix\n";}
     for (int c = 0; c < 4; c++){
         for (int r = 0; r < 4; r++){
             matrix.m[r][c] = m1.m[r][0] * m2.m[0][c] + m1.m[r][1] * m2.m[1][c] + m1.m[r][2] * m2.m[2][c] + m1.m[r][3] * m2.m[3][c];
         }
     }
-    std::cout << "End: Matrix_MultiplyMatrix\n\n";
+    if(fullDebugMode){std::cout << "End: Matrix_MultiplyMatrix\n\n";}
     return matrix;
 }
 
 mat4x4 Matrix_PointAt(vec3d &pos, vec3d &target, vec3d &up){
-    std::cout << "Begin: Matrix_PointAt\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_PointAt\n";}
     // Calculate new forwards direction
     vec3d newForward = Vector_Sub(target, pos);
     newForward = Vector_Normalise(newForward);
@@ -318,13 +322,13 @@ mat4x4 Matrix_PointAt(vec3d &pos, vec3d &target, vec3d &up){
     matrix.m[1][0] = newUp.x;		matrix.m[1][1] = newUp.y;		matrix.m[1][2] = newUp.z;		matrix.m[1][3] = 0.0f;
     matrix.m[2][0] = newForward.x;	matrix.m[2][1] = newForward.y;	matrix.m[2][2] = newForward.z;	matrix.m[2][3] = 0.0f;
     matrix.m[3][0] = pos.x;			matrix.m[3][1] = pos.y;			matrix.m[3][2] = pos.z;			matrix.m[3][3] = 1.0f;
-    std::cout << "End: Matrix_PointAt\n\n";
+    if(fullDebugMode){std::cout << "End: Matrix_PointAt\n\n";}
     return matrix;
 }
 
 // Only for Rotation/Translation Matrices
 mat4x4 Matrix_QuickInverse(mat4x4 &m){
-    std::cout << "Begin: Matrix_QuickInverse\n";
+    if(fullDebugMode){std::cout << "Begin: Matrix_QuickInverse\n";}
     mat4x4 matrix;
     matrix.m[0][0] = m.m[0][0]; matrix.m[0][1] = m.m[1][0]; matrix.m[0][2] = m.m[2][0]; matrix.m[0][3] = 0.0f;
     matrix.m[1][0] = m.m[0][1]; matrix.m[1][1] = m.m[1][1]; matrix.m[1][2] = m.m[2][1]; matrix.m[1][3] = 0.0f;
@@ -333,12 +337,12 @@ mat4x4 Matrix_QuickInverse(mat4x4 &m){
     matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
     matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
     matrix.m[3][3] = 1.0f;
-    std::cout << "End: Matrix_QuickInverse\n\n";
+    if(fullDebugMode){std::cout << "End: Matrix_QuickInverse\n\n";}
     return matrix;
 }
 
 vec3d Vector_IntersectPlane(vec3d &plane_p, vec3d &plane_n, vec3d &lineStart, vec3d &lineEnd){
-    std::cout << "Begin: Vector_IntersectPlane\n";
+    if(fullDebugMode){std::cout << "Begin: Vector_IntersectPlane\n";}
     plane_n = Vector_Normalise(plane_n);
     float plane_d = -Vector_DotProduct(plane_n, plane_p);
     float ad = Vector_DotProduct(lineStart, plane_n);
@@ -346,7 +350,7 @@ vec3d Vector_IntersectPlane(vec3d &plane_p, vec3d &plane_n, vec3d &lineStart, ve
     float t = (-plane_d - ad) / (bd - ad);
     vec3d lineStartToEnd = Vector_Sub(lineEnd, lineStart);
     vec3d lineToIntersect = Vector_Mul(lineStartToEnd, t);
-    std::cout << "End: Vector_IntersectPlane\n\n";
+    if(fullDebugMode){std::cout << "End: Vector_IntersectPlane\n\n";}
     return Vector_Add(lineStart, lineToIntersect);
 }
 
@@ -419,7 +423,7 @@ int Triangle_ClipAgainstPlane(vec3d plane_p, vec3d plane_n,
 
 
 void drawFilledTriangle(SDL_Renderer* renderer, vec2d p0, vec2d p1, vec2d p2) {
-    std::cout << "Begin: drawFilledTriangle\n";
+    if(fullDebugMode){std::cout << "Begin: drawFilledTriangle\n";}
     // Sort vertices by y
     if (p1.y < p0.y) std::swap(p0, p1);
     if (p2.y < p0.y) std::swap(p0, p2);
@@ -460,26 +464,26 @@ void drawFilledTriangle(SDL_Renderer* renderer, vec2d p0, vec2d p1, vec2d p2) {
             drawScanline(y, xa, xb);
         }
     }
-    std::cout << "End: drawFilledTriangle\n\n";
+    if(fullDebugMode){std::cout << "End: drawFilledTriangle\n\n";}
 }
 
 
 void CalculateScreenTransforms(){
-    std::cout << "Begin: CalculateScreenTransforms\n";
+    if(fullDebugMode){std::cout << "Begin: CalculateScreenTransforms\n";}
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
     fAspectRatio = (float)windowHeight / (float)windowWidth;
     fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * 3.14159265358979323f);
-    std::cout << "End: CalculateScreenTransforms\n\n";
+    if(fullDebugMode){std::cout << "End: CalculateScreenTransforms\n\n";}
 }
 
 void CalculateScreenProjection(){
-    std::cout << "Begin: CalculateScreenProjection\n";
+    if(fullDebugMode){std::cout << "Begin: CalculateScreenProjection\n";}
     matProj = Matrix_MakeProjection(90.0f, fAspectRatio, fNear, fFar);
-    std::cout << "End: CalculateScreenProjection\n\n";
+    if(fullDebugMode){std::cout << "End: CalculateScreenProjection\n\n";}
 }
 // Basic function to calculate deltatime (used to make things independant from framerate), run every frame
 void CalculateDeltaTime(){ 
-    std::cout << "Begin: CalculateDeltaTime\n";
+    if(fullDebugMode){std::cout << "Begin: CalculateDeltaTime\n";}
     static Uint64 lastCounter = 0;
 
     Uint64 currentCounter = SDL_GetPerformanceCounter();
@@ -493,13 +497,13 @@ void CalculateDeltaTime(){
     }
 
     lastCounter = currentCounter;
-    std::cout << "End: CalculateDeltaTime\n\n";
+    if(fullDebugMode){std::cout << "End: CalculateDeltaTime\n\n";}
 }
 
 void execOncePerSec(){  // A function that will execute once every new second since startup
-    std::cout << "Begin: execOncePerSec\n";
+    if(fullDebugMode){std::cout << "Begin: execOncePerSec\n";}
 
-    std::cout << "End: execOncePerSec\n\n";
+    if(fullDebugMode){std::cout << "End: execOncePerSec\n\n";}
 }
 
 unsigned long long framesElapsedSinceStartup;
@@ -509,7 +513,7 @@ float hoursElapsedSinceStartup;
 float daysElapsedSinceStartup;
 
 void MinuteTimer(){
-    std::cout << "Begin: MinuteTimer\n";
+    if(fullDebugMode){std::cout << "Begin: MinuteTimer\n";}
     framesElapsedSinceStartup++;
 
     if(framesElapsedSinceStartup == targetFrameRate){
@@ -522,7 +526,7 @@ void MinuteTimer(){
 
         execOncePerSec();
     }
-    std::cout << "End: MinuteTimer\n\n";
+    if(fullDebugMode){std::cout << "End: MinuteTimer\n\n";}
 }
 
 void PrintDebugInfo(){
@@ -535,10 +539,13 @@ void PrintDebugInfo(){
     std::cout << "secondsElapsedSinceStartup: " << secondsElapsedSinceStartup << "\n";
     std::cout << "minutesElapsedSinceStartup: " << minutesElapsedSinceStartup << "\n";
     std::cout << "hoursElapsedSinceStartup: " << hoursElapsedSinceStartup << "\n";
-    std::cout << "daysElapsedSinceStartup: " << daysElapsedSinceStartup << "\n";
+    std::cout << "daysElapsedSinceStartup: " << daysElapsedSinceStartup << "\n\n";
+
+    std::cout << "Draw Cycles completed: " << nDrawCycles << "\n\n";
 
     std::cout << "Camera Position:\n X: " << vCamera.x << "\n" << " Y: " << vCamera.y << "\n";
     std::cout << "\033[2J\033[1;1H"; //ANSI CODES to clear console screen
+    
     }
 }
 
@@ -609,21 +616,18 @@ SDL_AppResult SDL_AppIterate(void *appstate){
     CalculateDeltaTime();
     MinuteTimer();
 
-    /*
-
     float remainingFrameTime = (1.0f/targetFrameRate) - deltaTime;
     if (remainingFrameTime > 0.001f){
         SDL_Delay(int(remainingFrameTime * 1000.0f));
     }
 
-    */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Fill black background
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
     // Set up rotation matrices (stolen from thelonecoder, temporary)
     mat4x4 matRotZ, matRotX, matRotY;
-    fTheta += 0.5f * deltaTime;
+    fTheta += 1.0f * deltaTime;
 
     matRotZ = Matrix_MakeRotationZ(fTheta);
     matRotX = Matrix_MakeRotationX(fTheta);
@@ -752,7 +756,7 @@ SDL_AppResult SDL_AppIterate(void *appstate){
                 }
             }
             nNewTriangles = listTriangles.size();
-            std::cout << "Made triangle list\n";
+            if(fullDebugMode){std::cout << "Made triangle list\n";}
         };
 
         for (auto &t : listTriangles) {
@@ -762,7 +766,8 @@ SDL_AppResult SDL_AppIterate(void *appstate){
             { t.p[2].x, t.p[2].y }
             );
         }
-        std::cout << "Finished drawing once\n\n";
+        if(fullDebugMode){std::cout << "Finished drawing once\n\n";}
+        nDrawCycles++;
     };
         
 
