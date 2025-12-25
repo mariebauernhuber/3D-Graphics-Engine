@@ -2,7 +2,7 @@
 CC := g++
 
 # Flags
-CFLAGS := -Wall -Wextra
+CFLAGS := -Wall -Wextra -g
 LDFLAGS := -lSDL3 -lm
 
 # Directories
