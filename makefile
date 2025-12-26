@@ -2,8 +2,8 @@
 CC := g++
 
 # Flags
-CFLAGS := -Wall -Wextra -g
-LDFLAGS := -lSDL3 -lm
+CFLAGS := -Wall -Wextra -g 
+LDFLAGS := -lSDL3 -lm -lSDL3_ttf
 
 # Directories
 SRC_DIR := src

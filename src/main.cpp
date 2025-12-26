@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <list>
 
+
 bool fullDebugMode = false;
 
 unsigned long long nDrawCycles = 0;
@@ -53,15 +54,18 @@ struct mesh{
                 tris.push_back({verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1] });
             };
         }
-        return true;
         if(fullDebugMode){std::cout << "Vert cache filled!\n";}
         if(fullDebugMode){std::cout << "End: LoadFromObjectFile\n\n";}
+        return true;
     }
 };
 struct mat4x4{ float m[4][4] = { 0 }; };
 
 mesh meshCube;
-mat4x4 matProj;
+mesh meshCube2;
+
+vec3d meshPosition = {5.0f, 2.0f, 10.0f};
+vec3d meshPosition2 = {20.0f, 20.0f, 20.0f};
 
 vec3d vCamera = { 0.0f, 0.0f, 0.0f };
 vec3d vLookDir;
@@ -84,9 +88,11 @@ float realFrameRate;
 
 float deltaTime;
 
+bool consoleOpen = false;
+
 bool debugModeTogggled = false;
 
-vec3d Matrix_MultiplyVector(mat4x4 &m, vec3d &i){
+vec3d Matrix_MultiplyVector(const mat4x4 &m, const vec3d &i){
     if(fullDebugMode){std::cout << "Begin: Matrix_MultiplyVector\n";}
     vec3d v;
     v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
@@ -304,7 +310,7 @@ mat4x4 Matrix_MultiplyMatrix(mat4x4 &m1, mat4x4 &m2){
     return matrix;
 }
 
-mat4x4 Matrix_PointAt(vec3d &pos, vec3d &target, vec3d &up){
+mat4x4 Matrix_PointAt(const vec3d &pos, const vec3d &target, const vec3d &up){
     if(fullDebugMode){std::cout << "Begin: Matrix_PointAt\n";}
     // Calculate new forwards direction
     vec3d newForward = Vector_Sub(target, pos);
@@ -476,6 +482,9 @@ void CalculateScreenTransforms(){
     if(fullDebugMode){std::cout << "End: CalculateScreenTransforms\n\n";}
 }
 
+
+mat4x4 matView, matProj;
+
 void CalculateScreenProjection(){
     if(fullDebugMode){std::cout << "Begin: CalculateScreenProjection\n";}
     matProj = Matrix_MakeProjection(90.0f, fAspectRatio, fNear, fFar);
@@ -549,6 +558,181 @@ void PrintDebugInfo(){
     }
 }
 
+enum class CullMode {
+    None,
+    Back,
+    Front
+};
+
+CullMode gCullMode = CullMode::Back;
+
+struct Object3D {
+    mesh meshData;
+    vec3d position;
+    vec3d rotation; // Euler angles
+    vec3d scale = {1, 1, 1};
+
+    mat4x4 GetWorldMatrix() const {
+        mat4x4 matRotX = Matrix_MakeRotationX(rotation.x);
+        mat4x4 matRotY = Matrix_MakeRotationY(rotation.y);
+        mat4x4 matRotZ = Matrix_MakeRotationZ(rotation.z);
+
+        mat4x4 matWorld = Matrix_MultiplyMatrix(matRotZ, matRotX);
+        matWorld = Matrix_MultiplyMatrix(matWorld, matRotY);
+        mat4x4 matTrans = Matrix_MakeTranslation(position.x, position.y, position.z);
+        matWorld = Matrix_MultiplyMatrix(matWorld, matTrans);
+        return matWorld;
+    }
+};
+
+
+std::vector<Object3D> objects;
+
+
+vec2d ProjectToScreen(const vec3d &v) {
+    return {
+        (v.x + 1.0f) * 0.5f * (float)windowWidth,                 // X mapped to screen width
+        (1.0f - (v.y + 1.0f) * 0.5f) * (float)windowHeight       // Y flipped & mapped to screen height
+    };
+}
+
+// Define a simple struct for a plane in view space
+
+bool IsTriangleInView(const triangle &tri) {
+    // Check if any vertex is inside NDC cube
+    for(int i=0; i<3; i++){
+        if(tri.p[i].x >= -1.0f && tri.p[i].x <= 1.0f &&
+           tri.p[i].y >= -1.0f && tri.p[i].y <= 1.0f &&
+           tri.p[i].z >= 0.0f  && tri.p[i].z <= 1.0f) {
+            return true; // At least one vertex is inside view
+        }
+    }
+    return false; // Fully outside
+}
+
+struct Plane {
+    vec3d point;
+    vec3d normal;
+};
+
+std::vector<Plane> gFrustumPlanes;
+
+void UpdateFrustumPlanes() {
+    gFrustumPlanes.clear();
+
+    float nearHeight = 2.0f * tanf(fFov * 0.5f * 3.14159265f / 180.0f) * fNear;
+    float nearWidth  = nearHeight / fAspectRatio;
+
+    float farHeight  = 2.0f * tanf(fFov * 0.5f * 3.14159265f / 180.0f) * fFar;
+    float farWidth   = farHeight / fAspectRatio;
+
+    // Near plane
+    gFrustumPlanes.push_back({ {0,0,fNear}, {0,0,1} });
+    // Far plane
+    gFrustumPlanes.push_back({ {0,0,fFar}, {0,0,-1} });
+
+    // Right plane
+    gFrustumPlanes.push_back({ {0,0,0}, Vector_Normalise({fNear/2,0,fNear}) });
+    // Left plane
+    gFrustumPlanes.push_back({ {0,0,0}, Vector_Normalise({-fNear/2,0,fNear}) });
+    // Top plane
+    gFrustumPlanes.push_back({ {0,0,0}, Vector_Normalise({0,nearHeight/2,fNear}) });
+    // Bottom plane
+    gFrustumPlanes.push_back({ {0,0,0}, Vector_Normalise({0,-nearHeight/2,fNear}) });
+}
+
+std::vector<triangle> ClipTriangleToFrustumOptimized(const triangle &tri) {
+    std::vector<triangle> clippedTris;
+    clippedTris.push_back(tri);
+
+    for(const auto &plane : gFrustumPlanes) {
+        std::vector<triangle> newTris;
+        for(auto &t : clippedTris) {
+            triangle t1, t2;
+            int n = Triangle_ClipAgainstPlane(plane.point, plane.normal, t, t1, t2);
+            if(n == 1) newTris.push_back(t1);
+            if(n == 2){ newTris.push_back(t1); newTris.push_back(t2); }
+        }
+        clippedTris = newTris;
+        if(clippedTris.empty()) break; // Fully outside
+    }
+
+    return clippedTris;
+}
+
+void RenderObject(SDL_Renderer* renderer, const Object3D &obj, const mat4x4 &matView, const mat4x4 &matProj) {
+    std::vector<triangle> vecTrianglesToRaster;
+
+    mat4x4 matWorld = obj.GetWorldMatrix();
+
+    for(const auto &tri : obj.meshData.tris) {
+        triangle triTransformed, triViewed;
+
+        // 1. Transform to world space
+        triTransformed.p[0] = Matrix_MultiplyVector(matWorld, tri.p[0]);
+        triTransformed.p[1] = Matrix_MultiplyVector(matWorld, tri.p[1]);
+        triTransformed.p[2] = Matrix_MultiplyVector(matWorld, tri.p[2]);
+
+        // 2. Transform to view space
+        triViewed.p[0] = Matrix_MultiplyVector(matView, triTransformed.p[0]);
+        triViewed.p[1] = Matrix_MultiplyVector(matView, triTransformed.p[1]);
+        triViewed.p[2] = Matrix_MultiplyVector(matView, triTransformed.p[2]);
+
+        // 3. Backface culling
+        vec3d normal = Vector_CrossProduct(
+            Vector_Sub(triViewed.p[1], triViewed.p[0]),
+            Vector_Sub(triViewed.p[2], triViewed.p[0])
+        );
+        normal = Vector_Normalise(normal);
+
+        if(gCullMode == CullMode::Back && Vector_DotProduct(normal, triViewed.p[0]) >= 0.0f) continue;
+        if(gCullMode == CullMode::Front && Vector_DotProduct(normal, triViewed.p[0]) < 0.0f) continue;
+
+        // 4. Clip triangle against frustum planes
+        auto clippedTris = ClipTriangleToFrustumOptimized(triViewed);
+
+        // 5. Project and add to raster list
+        for(auto &triProj : clippedTris) {
+            triangle triProjected;
+            triProjected.p[0] = Matrix_MultiplyVector(matProj, triProj.p[0]);
+            triProjected.p[1] = Matrix_MultiplyVector(matProj, triProj.p[1]);
+            triProjected.p[2] = Matrix_MultiplyVector(matProj, triProj.p[2]);
+
+            // Perspective divide
+            for(int i=0; i<3; i++){
+                triProjected.p[i].x /= triProjected.p[i].w;
+                triProjected.p[i].y /= triProjected.p[i].w;
+                triProjected.p[i].z /= triProjected.p[i].w;
+            }
+
+            vecTrianglesToRaster.push_back(triProjected);
+        }
+    }
+
+    // 6. Depth sort
+    std::sort(vecTrianglesToRaster.begin(), vecTrianglesToRaster.end(), [](const triangle &t1, const triangle &t2){
+        float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+        float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
+        return z1 > z2;
+    });
+
+    // 7. Rasterize
+    for(const auto &t : vecTrianglesToRaster){
+        vec2d p0 = ProjectToScreen(t.p[0]);
+        vec2d p1 = ProjectToScreen(t.p[1]);
+        vec2d p2 = ProjectToScreen(t.p[2]);
+
+        if(debugModeTogggled){
+            SDL_RenderLine(renderer, p0.x, p0.y, p1.x, p1.y);
+            SDL_RenderLine(renderer, p1.x, p1.y, p2.x, p2.y);
+            SDL_RenderLine(renderer, p2.x, p2.y, p0.x, p0.y);
+        } else {
+            drawFilledTriangle(renderer, p0, p1, p2);
+        }
+    }
+}
+
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
     if(!SDL_Init(SDL_INIT_VIDEO)){
         return SDL_APP_FAILURE;
@@ -560,6 +744,20 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
     CalculateScreenProjection();
    
     meshCube.LoadFromObjectFile("src/VideoShip.obj");
+    meshCube2.LoadFromObjectFile("src/VideoShip.obj");
+
+    Object3D ship;
+    ship.meshData = meshCube;
+    ship.position = {0.0f, 0.0f, 5.0f};
+    ship.rotation = {0.0f, 0.0f, 0.0f};
+
+    Object3D ship2;
+    ship2.meshData = meshCube;
+    ship2.position = {0.0f, 0.0f, 15.0f};
+    ship2.rotation = {0.0f, 0.0f, 0.0f};
+
+    objects.push_back(ship);
+    objects.push_back(ship2);
 
     SDL_SetWindowRelativeMouseMode(window, true);
 
@@ -568,7 +766,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
     mat4x4 matRotY = Matrix_MakeIdentity();
     mat4x4 matTrans = Matrix_MakeIdentity();
     mat4x4 matWorld = Matrix_MakeIdentity();
-
 
     std::cout << "Init done!";
 
@@ -596,11 +793,17 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event){
         if(event->key.scancode == SDL_SCANCODE_F8) {
             debugModeTogggled = !debugModeTogggled;
         };
+        if (event->key.scancode == SDL_SCANCODE_F6) {
+            if (gCullMode == CullMode::Back) gCullMode = CullMode::Front;
+            else if (gCullMode == CullMode::Front) gCullMode = CullMode::None;
+            else gCullMode = CullMode::Back;
+        }
+
     }
 
     if(event->type == SDL_EVENT_MOUSE_MOTION){
         fYaw   += event->motion.xrel * fMouseSensitivity;
-        fPitch += event->motion.yrel * fMouseSensitivity;
+        fPitch -= event->motion.yrel * fMouseSensitivity;
 
         // Clamp pitch to avoid flipping
         if (fPitch > fMaxPitch)  fPitch = fMaxPitch;
@@ -611,223 +814,102 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event){
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate){
-
-
+    // 1. Update delta time
     CalculateDeltaTime();
     MinuteTimer();
 
-    float remainingFrameTime = (1.0f/targetFrameRate) - deltaTime;
+    // 2. Limit frame rate
+    float remainingFrameTime = (1.0f / targetFrameRate) - deltaTime;
     if (remainingFrameTime > 0.001f){
         SDL_Delay(int(remainingFrameTime * 1000.0f));
     }
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Fill black background
-    SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-    // Set up rotation matrices (stolen from thelonecoder, temporary)
-    mat4x4 matRotZ, matRotX, matRotY;
-    fTheta += 0.0f * deltaTime;
-
-    matRotZ = Matrix_MakeRotationZ(fTheta);
-    matRotX = Matrix_MakeRotationX(fTheta);
-    matRotY = Matrix_MakeRotationY(fTheta);
-
-    mat4x4 matTrans;
-    matTrans = Matrix_MakeTranslation(0.0f, 0.0f, 16.0f);
-
-    mat4x4 matWorld;
-    matWorld = Matrix_MakeIdentity();
-    matWorld = Matrix_MultiplyMatrix(matRotZ, matRotX);
-    matWorld = Matrix_MultiplyMatrix(matWorld, matTrans);
-
-    vLookDir.x = cosf(fPitch) * sinf(fYaw);
-    vLookDir.y = sinf(fPitch);
-    vLookDir.z = cosf(fPitch) * cosf(fYaw);
-    vLookDir = Vector_Normalise(vLookDir);
-
-    vec3d vUp = { 0,1,0 };
-    vec3d vTarget = Vector_Add(vCamera, vLookDir);
-
-    mat4x4 matCamera = Matrix_PointAt(vCamera, vTarget, vUp);
-
-    mat4x4 matView = Matrix_QuickInverse(matCamera);
-
-    std::vector<triangle> vecTrianglesToRaster;
-
-    for(auto tri : meshCube.tris) {
-        triangle triProjected, triTransformed, triViewed;
-        
-        triTransformed.p[0] = Matrix_MultiplyVector(matWorld, tri.p[0]);
-        triTransformed.p[1] = Matrix_MultiplyVector(matWorld, tri.p[1]);
-        triTransformed.p[2] = Matrix_MultiplyVector(matWorld, tri.p[2]);
-        
-        // Triangle normals
-        vec3d normal, line1, line2;
-        
-        //Get lines either side of triangle
-        line1 = Vector_Sub(triTransformed.p[1], triTransformed.p[0]);
-        line2 = Vector_Sub(triTransformed.p[2], triTransformed.p[0]);
-        
-        //Take cross product of lines to get normal to triangle surface 
-        normal = Vector_CrossProduct(line1, line2);
-
-        // Normalise
-        normal = Vector_Normalise(normal);
-
-        vec3d vCameraRay = Vector_Sub(triTransformed.p[0], vCamera);
-
-        if(Vector_DotProduct(normal, vCameraRay) < 0.0f){
-            // Convert World Space into view space
-            triViewed.p[0] = Matrix_MultiplyVector(matView, triTransformed.p[0]);
-            triViewed.p[1] = Matrix_MultiplyVector(matView, triTransformed.p[1]);
-            triViewed.p[2] = Matrix_MultiplyVector(matView, triTransformed.p[2]);
-
-            int nClippedTriangles = 0;
-            triangle clipped[2] = { 0 };
-            nClippedTriangles = Triangle_ClipAgainstPlane({0.0f, 0.0f, fNear}, {0.0f, 0.0f, 1.0f}, triViewed, clipped[0], clipped[1]);
-
-            for (int n = 0; n < nClippedTriangles; n++){
-                //Project into 2D space
-                triProjected.p[0] = Matrix_MultiplyVector(matProj, clipped[n].p[0]);
-                triProjected.p[1] = Matrix_MultiplyVector(matProj, clipped[n].p[1]);
-                triProjected.p[2] = Matrix_MultiplyVector(matProj, clipped[n].p[2]);
-
-                //Scale into view, normalise
-                triProjected.p[0] = Vector_Div(triProjected.p[0], triProjected.p[0].w);
-                triProjected.p[1] = Vector_Div(triProjected.p[1], triProjected.p[1].w);
-                triProjected.p[2] = Vector_Div(triProjected.p[2], triProjected.p[2].w);
-
-                //Offset
-                vec3d vOffsetView = { 1, 1, 0 };
-                triProjected.p[0] = Vector_Add(triProjected.p[0], vOffsetView);
-                triProjected.p[1] = Vector_Add(triProjected.p[1], vOffsetView);
-                triProjected.p[2] = Vector_Add(triProjected.p[2], vOffsetView);
-                triProjected.p[0].x *= 0.5f * (float)windowWidth;
-                triProjected.p[0].y *= 0.5f * (float)windowHeight;
-                triProjected.p[1].x *= 0.5f * (float)windowWidth;
-                triProjected.p[1].y *= 0.5f * (float)windowHeight;
-                triProjected.p[2].x *= 0.5f * (float)windowWidth;
-                triProjected.p[2].y *= 0.5f * (float)windowHeight;
-
-                vecTrianglesToRaster.push_back(triProjected);
-            }
-        }
-    }
-
-    std::sort(vecTrianglesToRaster.begin(), vecTrianglesToRaster.end(), [](triangle &t1, triangle &t2){
-        float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
-        float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
-        return z1 > z2;
-    });
-
-    for(auto &triToRaster : vecTrianglesToRaster){
-        triangle clipped[2];
-        std::list<triangle> listTriangles;
-        listTriangles.push_back(triToRaster);
-        int nNewTriangles = 1;
-        
-        for(int p = 0; p < 4; p++){
-            int nTrisToAdd = 0;
-            while (nNewTriangles > 0){
-                triangle test = listTriangles.front();
-                listTriangles.pop_front();
-                nNewTriangles--;
-                switch(p){
-                    case 0:
-                        nTrisToAdd = Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f},
-                                     test, clipped[0], clipped[1]);
-                        break;
-                    case 1:
-                        nTrisToAdd = Triangle_ClipAgainstPlane({ 0.0f, (float)windowHeight - 1, 0.0f }, { 0.0f, -1.0f, 0.0f },
-                                     test, clipped[0], clipped[1]); 
-                        break;
-                    case 2:
-                        nTrisToAdd = Triangle_ClipAgainstPlane({ 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f },
-                                     test, clipped[0], clipped[1]); 
-                        break;
-                    case 3:
-                        nTrisToAdd = Triangle_ClipAgainstPlane({ (float)windowWidth - 1, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f },
-                                     test, clipped[0], clipped[1]); 
-                        break;
-                }
-                for (int w = 0; w < nTrisToAdd; w++){
-                    listTriangles.push_back(clipped[w]);
-                }
-            }
-            nNewTriangles = listTriangles.size();
-            if(fullDebugMode){std::cout << "Made triangle list\n";}
-        };
-
-        for (auto &t : listTriangles) {
-            if(debugModeTogggled){
-                SDL_RenderLine(
-                renderer,
-                t.p[0].x, t.p[0].y,
-                t.p[1].x, t.p[1].y
-                );
-
-                SDL_RenderLine(
-                renderer,
-                t.p[1].x, t.p[1].y,
-                t.p[2].x, t.p[2].y
-                );
-
-                SDL_RenderLine(
-                renderer,
-                t.p[2].x, t.p[2].y,
-                t.p[0].x, t.p[0].y
-                );
-            }else{
-                drawFilledTriangle(renderer,
-                { t.p[0].x, t.p[0].y },
-                { t.p[1].x, t.p[1].y },
-                { t.p[2].x, t.p[2].y }
-                );
-            };
-        }
-        if(fullDebugMode){std::cout << "Finished drawing once\n\n";}
-        nDrawCycles++;
-    };
-        
-
+    // 3. Process keyboard input for camera movement
     const bool *key_states = SDL_GetKeyboardState(NULL);
-
     float fMoveSpeed = 8.0f * deltaTime;
 
     // Forward / Back
-    if (key_states[SDL_SCANCODE_W]){
+    if (key_states[SDL_SCANCODE_W])
         vCamera = Vector_Add(vCamera, Vector_Mul(vLookDir, fMoveSpeed));
-    }
-    if (key_states[SDL_SCANCODE_S]){
+    if (key_states[SDL_SCANCODE_S])
         vCamera = Vector_Sub(vCamera, Vector_Mul(vLookDir, fMoveSpeed));
-    }
+
     // Right / Left
     vec3d vRight = Vector_Normalise(Vector_CrossProduct(vLookDir, {0,1,0}));
-
-    if (key_states[SDL_SCANCODE_D]){
+    if (key_states[SDL_SCANCODE_D])
         vCamera = Vector_Sub(vCamera, Vector_Mul(vRight, fMoveSpeed));
-    }
-    if (key_states[SDL_SCANCODE_A]){
+    if (key_states[SDL_SCANCODE_A])
         vCamera = Vector_Add(vCamera, Vector_Mul(vRight, fMoveSpeed));
-    }
-    if (key_states[SDL_SCANCODE_SPACE]){
-        vCamera.y -= 8.0f * deltaTime;
-    }
-    if (key_states[SDL_SCANCODE_LSHIFT]){
+
+    // Up / Down
+    if (key_states[SDL_SCANCODE_SPACE])
         vCamera.y += 8.0f * deltaTime;
+    if (key_states[SDL_SCANCODE_LSHIFT])
+        vCamera.y -= 8.0f * deltaTime;
+
+    // 4. Update camera orientation based on mouse look
+    vec3d vForward = {
+        cosf(fPitch) * sinf(fYaw),
+        sinf(fPitch),
+        cosf(fPitch) * cosf(fYaw)
+    };
+
+    vLookDir = Vector_Normalise(vForward);
+
+    objects[1].rotation.x += 150.0f * deltaTime;
+
+    // 5. Update view matrix
+    vec3d vUp = {0, 1, 0};
+    matView = Matrix_PointAt(vCamera, Vector_Add(vCamera, vLookDir), vUp);
+    matView = Matrix_QuickInverse(matView);
+
+    UpdateFrustumPlanes();
+
+    // 6. Clear screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    // 7. Render all objects
+    for(auto &obj : objects){
+        RenderObject(renderer, obj, matView, matProj);
     }
 
-    SDL_RenderPresent(renderer);
-    
-    realFrameRate = (1.0f / deltaTime);
+    if(consoleOpen){
+    // Draw a semi-transparent background
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 180); 
+    SDL_FRect consoleRect = {50, 50, 400, 300};
+    SDL_RenderFillRect(renderer, &consoleRect);
 
-    if(debugModeTogggled){
+    // Here you could draw text using SDL_ttf or something simple
+    // For debugging, you could also print object positions to console
+    for(size_t i = 0; i < objects.size(); i++){
+        std::cout << "Object " << i 
+                  << " Pos: " << objects[i].position.x << ", " 
+                  << objects[i].position.y << ", " 
+                  << objects[i].position.z << "\n";
+        std::cout << "Rot: " << objects[i].rotation.x << ", "
+                  << objects[i].rotation.y << ", "
+                  << objects[i].rotation.z << "\n";
+    }
+}
+
+    // 8. Present final frame
+    SDL_RenderPresent(renderer);
+
+    // 9. Update real frame rate
+    realFrameRate = 1.0f / deltaTime;
+
+    // 10. Optional debug info
+    if(debugModeTogggled)
         PrintDebugInfo();
-    };
+
+    // 11. Increment draw cycles
+    nDrawCycles++;
 
     return SDL_APP_CONTINUE;
 }
+
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result){
     SDL_Quit();
