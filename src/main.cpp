@@ -63,6 +63,8 @@ struct mat4x4{ float m[4][4] = { 0 }; };
 
 mesh meshCube;
 mesh meshCube2;
+mesh teapotMesh;
+mesh teddybearMesh;
 
 vec3d meshPosition = {5.0f, 2.0f, 10.0f};
 vec3d meshPosition2 = {20.0f, 20.0f, 20.0f};
@@ -745,6 +747,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
    
     meshCube.LoadFromObjectFile("src/VideoShip.obj");
     meshCube2.LoadFromObjectFile("src/VideoShip.obj");
+    teapotMesh.LoadFromObjectFile("src/teapot.obj");
+    teddybearMesh.LoadFromObjectFile("src/teddybear.obj");
 
     Object3D ship;
     ship.meshData = meshCube;
@@ -766,10 +770,22 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
     movingShip.position = {10.0f, 0.0f, 0.0f};
     movingShip.rotation = {5.0f, 0.0f, 0.0f};
 
+    Object3D teapot;
+    teapot.meshData = teapotMesh;
+    teapot.position = {25.0f, 0.0f, 25.0f};
+    teapot.rotation = {0.0f, 180.0f, 0.0f};
+
+    Object3D teddybear;
+    teddybear.meshData = teddybearMesh;
+    teddybear.position = {50.0f, 0.0f, 25.0f};
+    teddybear.rotation = {0.0f, 180.0f, 0.0f};
+
     objects.push_back(ship);
     objects.push_back(ship2);
     objects.push_back(ship3);
     objects.push_back(movingShip);
+    objects.push_back(teapot);
+    objects.push_back(teddybear);
 
     SDL_SetWindowRelativeMouseMode(window, true);
 
@@ -871,6 +887,8 @@ SDL_AppResult SDL_AppIterate(void *appstate){
     objects[2].rotation.z += 2.0f * deltaTime;
     objects[1].rotation.y += 2.0f * deltaTime;
     objects[0].rotation.x += 2.0f * deltaTime;
+
+    objects[4].rotation.y += 2.0f * deltaTime;
 
     // 5. Update view matrix
     vec3d vUp = {0, 1, 0};
