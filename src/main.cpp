@@ -83,7 +83,7 @@ float fFov = 90.0f;
 float fFovRad;
 float fAspectRatio;
 
-float targetFrameRate = 120;
+float targetFrameRate = 60;
 float realFrameRate;
 
 float deltaTime;
@@ -756,8 +756,20 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
     ship2.position = {0.0f, 0.0f, 15.0f};
     ship2.rotation = {0.0f, 0.0f, 0.0f};
 
+    Object3D ship3;
+    ship3.meshData = meshCube;
+    ship3.position = {0.0f, 0.0f, 25.0f};
+    ship3.rotation = {0.0f, 0.0f, 0.0f};
+
+    Object3D movingShip;
+    movingShip.meshData = meshCube;
+    movingShip.position = {10.0f, 0.0f, 0.0f};
+    movingShip.rotation = {5.0f, 0.0f, 0.0f};
+
     objects.push_back(ship);
     objects.push_back(ship2);
+    objects.push_back(ship3);
+    objects.push_back(movingShip);
 
     SDL_SetWindowRelativeMouseMode(window, true);
 
@@ -856,7 +868,9 @@ SDL_AppResult SDL_AppIterate(void *appstate){
 
     vLookDir = Vector_Normalise(vForward);
 
-    objects[1].rotation.x += 150.0f * deltaTime;
+    objects[2].rotation.z += 2.0f * deltaTime;
+    objects[1].rotation.y += 2.0f * deltaTime;
+    objects[0].rotation.x += 2.0f * deltaTime;
 
     // 5. Update view matrix
     vec3d vUp = {0, 1, 0};
