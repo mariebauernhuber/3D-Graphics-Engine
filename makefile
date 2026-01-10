@@ -1,47 +1,37 @@
-# Compiler
 CC := g++
 
-# Flags
-CFLAGS := -Wall -Wextra -g 
-LDFLAGS := -lSDL3 -lm -lSDL3_ttf
+# Use pkg-config to get exact Nix store paths for the LSP
+SDL_CFLAGS := $(shell pkg-config --cflags sdl3 sdl3-ttf)
+SDL_LIBS   := $(shell pkg-config --libs sdl3 sdl3-ttf)
 
-# Directories
-SRC_DIR := src
+CPPFLAGS := -Wall -Wextra -g -Iinclude $(SDL_CFLAGS)
+LDFLAGS  := $(SDL_LIBS) -lm
+
+SRC_DIR   := src
 BUILD_DIR := build
+SRCS      := $(wildcard $(SRC_DIR)/*.cpp)
+OBJS      := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+TARGET    := $(BUILD_DIR)/app
 
-# Files
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
-
-# Output executable
-TARGET := $(BUILD_DIR)/app
-
-# Default target
 all: $(TARGET)
 
-# Link object files into final executable
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
-# Compile .c files into .o files
+# Fixed: Now uses $(CPPFLAGS) so bear captures the include paths
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) -c $< -o $@
 
-# Create build directory if missing
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-# Run the program
 run: $(TARGET)
 	./$(TARGET)
 
-# Clean build files
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: all clean run
-
-#force recompilation
-.PHONY: force
 force:
 	$(MAKE) clean all
+
+.PHONY: all clean run force
