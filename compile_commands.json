@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/nix/store/r9wbjib6xxjkyb9yvjvrkl4sq61i2lyn-gcc-wrapper-15.2.0/bin/g++",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-c",
+      "-o",
+      "build/main.o",
+      "src/main.cpp"
+    ],
+    "directory": "/home/nils/Docs/3D-Fast-paced-fps",
+    "file": "/home/nils/Docs/3D-Fast-paced-fps/src/main.cpp",
+    "output": "/home/nils/Docs/3D-Fast-paced-fps/build/main.o"
+  }
+]

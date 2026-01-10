@@ -858,9 +858,9 @@ SDL_AppResult SDL_AppIterate(void *appstate){
 
     // Forward / Back
     if (key_states[SDL_SCANCODE_W])
-        vCamera = Vector_Add(vCamera, Vector_Mul(vLookDir, fMoveSpeed));
+        vCamera = Vector_Add(vCamera, Vector_Mul(Vector_Normalise({vLookDir.x, 0.0f, vLookDir.z}), fMoveSpeed));
     if (key_states[SDL_SCANCODE_S])
-        vCamera = Vector_Sub(vCamera, Vector_Mul(vLookDir, fMoveSpeed));
+        vCamera = Vector_Sub(vCamera, Vector_Mul(Vector_Normalise({vLookDir.x, 0.0f, vLookDir.z}), fMoveSpeed));
 
     // Right / Left
     vec3d vRight = Vector_Normalise(Vector_CrossProduct(vLookDir, {0,1,0}));

@@ -9,6 +9,8 @@ pkgs.mkShell {
 		sdl3-ttf
 		glew
 		glm
+		clang-tools
+		bear
 	];
 	shellHook = ''
   if [ -z "$LD_LIBRARY_PATH" ]; then
