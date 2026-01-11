@@ -141,7 +141,7 @@ int main(int argc, char* argv[]){
 			}
 		    }
 
-
+		if(!debugModeTogggled){
 		    if(event.type == SDL_EVENT_MOUSE_MOTION){
 			fYaw   += event.motion.xrel * fMouseSensitivity;
 			fPitch -= event.motion.yrel * fMouseSensitivity;
@@ -150,12 +150,12 @@ int main(int argc, char* argv[]){
 			if (fPitch > fMaxPitch)  fPitch = fMaxPitch;
 			if (fPitch < -fMaxPitch) fPitch = -fMaxPitch;
 		    }
+		}
 
 	    }
 
 	    // 1. Update delta time
-
-	    if(paused){ deltaTime = 0; };
+	    CalculateDeltaTime();
 
 	    // 2. Limit frame rate
 	    float remainingFrameTime = (1.0f / targetFrameRate) - deltaTime;
@@ -245,7 +245,6 @@ int main(int argc, char* argv[]){
 	    // 10. Optional debug info
 	    if(debugModeTogggled)
 		PrintDebugInfo();
-
 
 	    // 11. Increment draw cycles
 	    nDrawCycles++;
