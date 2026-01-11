@@ -1,4 +1,7 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_mouse.h>
+#include <SDL3/SDL_scancode.h>
+#include <SDL3/SDL_video.h>
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -6,11 +9,16 @@
 #include "../include/mesh.hpp"
 #include "../include/geometry.hpp"
 #include "../include/renderer.hpp"
+#include <imgui.h>
+#include "../imgui/backends/imgui_impl_sdl3.h"
+#include "../imgui/backends/imgui_impl_sdlrenderer3.h"
 
 extern bool debugModeTogggled;
 extern float deltaTime;
 extern float targetFrameRate;
 extern float realFrameRate;
+
+bool paused = false;
 
 unsigned long long nObjRenderCycles = 0;
 
@@ -82,6 +90,13 @@ int main(int argc, char* argv[]){
 
     SDL_SetWindowRelativeMouseMode(window, true);
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
     std::cout << "Init done!";
 
     bool is_running = true;
@@ -89,6 +104,7 @@ int main(int argc, char* argv[]){
 
     while(is_running){
 	    while(SDL_PollEvent(&event)){
+		    ImGui_ImplSDL3_ProcessEvent(&event);
 		    if (event.type == SDL_EVENT_QUIT) {
 			    is_running = false;
 		    }
@@ -99,7 +115,6 @@ int main(int argc, char* argv[]){
 
 
 		    if(event.type == SDL_EVENT_KEY_DOWN){
-			if(event.key.scancode == SDL_SCANCODE_ESCAPE){ is_running = false; }
 			if(event.key.scancode == SDL_SCANCODE_F11){
 			    if(SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN){
 				SDL_SetWindowFullscreen(window, 0);
@@ -112,6 +127,10 @@ int main(int argc, char* argv[]){
 			    };
 			    
 			};
+			if(event.key.scancode == SDL_SCANCODE_ESCAPE){
+				paused = !paused;
+
+			}
 			if(event.key.scancode == SDL_SCANCODE_F8) {
 				debugModeTogggled = !debugModeTogggled;
 			};
@@ -121,6 +140,7 @@ int main(int argc, char* argv[]){
 			    else gCullMode = CullMode::Back;
 			}
 		    }
+
 
 		    if(event.type == SDL_EVENT_MOUSE_MOTION){
 			fYaw   += event.motion.xrel * fMouseSensitivity;
@@ -134,8 +154,8 @@ int main(int argc, char* argv[]){
 	    }
 
 	    // 1. Update delta time
-	    CalculateDeltaTime();
-	    MinuteTimer();
+
+	    if(paused){ deltaTime = 0; };
 
 	    // 2. Limit frame rate
 	    float remainingFrameTime = (1.0f / targetFrameRate) - deltaTime;
@@ -167,11 +187,22 @@ int main(int argc, char* argv[]){
 		vCamera.y -= 8.0f * deltaTime;
 
 	    // 4. Update camera orientation based on mouse look
-	    vec3d vForward = {
-		cosf(fPitch) * sinf(fYaw),
-		sinf(fPitch),
-		cosf(fPitch) * cosf(fYaw)
-	    };
+	    vec3d vForward;
+	    if(!debugModeTogggled){
+		    vForward = {
+			cosf(fPitch) * sinf(fYaw),
+			sinf(fPitch),
+			cosf(fPitch) * cosf(fYaw)
+		    };
+	    }
+
+	    if(debugModeTogggled){
+		    if(SDL_GetWindowMouseGrab(window)){ SDL_SetWindowMouseGrab(window, false); };
+		    if(SDL_GetWindowRelativeMouseMode(window)){ SDL_SetWindowRelativeMouseMode(window, false); };
+	    }else{
+		    if(!SDL_GetWindowMouseGrab(window)){ SDL_SetWindowMouseGrab(window, true); };
+		    if(!SDL_GetWindowRelativeMouseMode(window)){ SDL_SetWindowRelativeMouseMode(window, true); };
+	    }
 
 	    vLookDir = Vector_Normalise(vForward);
 
@@ -199,24 +230,11 @@ int main(int argc, char* argv[]){
 		nObjRenderCycles++;
 	    }
 
-	    if(consoleOpen){
-		    // Draw a semi-transparent background
-		    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 180); 
-		    SDL_FRect consoleRect = {50, 50, 400, 300};
-		    SDL_RenderFillRect(renderer, &consoleRect);
-
-		    // Here you could draw text using SDL_ttf or something simple
-		    // For debugging, you could also print object positions to console
-		    for(size_t i = 0; i < objects.size(); i++){
-			std::cout << "Object " << i 
-				  << " Pos: " << objects[i].position.x << ", " 
-				  << objects[i].position.y << ", " 
-				  << objects[i].position.z << "\n";
-			std::cout << "Rot: " << objects[i].rotation.x << ", "
-				  << objects[i].rotation.y << ", "
-				  << objects[i].rotation.z << "\n";
-		    }
-            }
+            ImGui_ImplSDL3_NewFrame();
+	    ImGui::NewFrame();
+	    if(debugModeTogggled){ImGui::ShowDemoWindow(NULL);}
+	    ImGui::Render();
+	    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
 
 	    // 8. Present final frame
 	    SDL_RenderPresent(renderer);
@@ -227,6 +245,7 @@ int main(int argc, char* argv[]){
 	    // 10. Optional debug info
 	    if(debugModeTogggled)
 		PrintDebugInfo();
+
 
 	    // 11. Increment draw cycles
 	    nDrawCycles++;

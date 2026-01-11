@@ -11,6 +11,7 @@ pkgs.mkShell {
 		glm
 		clang-tools
 		bear
+		imgui
 	];
 	shellHook = ''
   if [ -z "$LD_LIBRARY_PATH" ]; then

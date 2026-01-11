@@ -8,24 +8,8 @@
       "-Iinclude",
       "-I/nix/store/iv95kv48a8akq8q5bn5gwha5vplpk1f0-sdl3-3.2.28-dev/include",
       "-I/nix/store/6rdb58ngijcrfmr2m5jzrqjxz8wafsdb-sdl3-ttf-3.2.2/include",
-      "-c",
-      "-o",
-      "build/geometry.o",
-      "src/geometry.cpp"
-    ],
-    "directory": "/home/nils/Docs/3D-Fast-paced-fps",
-    "file": "/home/nils/Docs/3D-Fast-paced-fps/src/geometry.cpp",
-    "output": "/home/nils/Docs/3D-Fast-paced-fps/build/geometry.o"
-  },
-  {
-    "arguments": [
-      "/nix/store/r9wbjib6xxjkyb9yvjvrkl4sq61i2lyn-gcc-wrapper-15.2.0/bin/g++",
-      "-Wall",
-      "-Wextra",
-      "-g",
-      "-Iinclude",
-      "-I/nix/store/iv95kv48a8akq8q5bn5gwha5vplpk1f0-sdl3-3.2.28-dev/include",
-      "-I/nix/store/6rdb58ngijcrfmr2m5jzrqjxz8wafsdb-sdl3-ttf-3.2.2/include",
+      "-Iimgui",
+      "-Iimgui/backends",
       "-c",
       "-o",
       "build/main.o",
@@ -34,23 +18,5 @@
     "directory": "/home/nils/Docs/3D-Fast-paced-fps",
     "file": "/home/nils/Docs/3D-Fast-paced-fps/src/main.cpp",
     "output": "/home/nils/Docs/3D-Fast-paced-fps/build/main.o"
-  },
-  {
-    "arguments": [
-      "/nix/store/r9wbjib6xxjkyb9yvjvrkl4sq61i2lyn-gcc-wrapper-15.2.0/bin/g++",
-      "-Wall",
-      "-Wextra",
-      "-g",
-      "-Iinclude",
-      "-I/nix/store/iv95kv48a8akq8q5bn5gwha5vplpk1f0-sdl3-3.2.28-dev/include",
-      "-I/nix/store/6rdb58ngijcrfmr2m5jzrqjxz8wafsdb-sdl3-ttf-3.2.2/include",
-      "-c",
-      "-o",
-      "build/obj_loader.o",
-      "src/obj_loader.cpp"
-    ],
-    "directory": "/home/nils/Docs/3D-Fast-paced-fps",
-    "file": "/home/nils/Docs/3D-Fast-paced-fps/src/obj_loader.cpp",
-    "output": "/home/nils/Docs/3D-Fast-paced-fps/build/obj_loader.o"
   }
 ]
