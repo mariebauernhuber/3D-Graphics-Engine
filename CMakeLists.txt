@@ -3,6 +3,7 @@ project(RIPWAKE LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)  # Adjust if needed
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Global flags matching your CPPFLAGS
 add_compile_options(-Wall -Wextra -g -fdiagnostics-color=always)
