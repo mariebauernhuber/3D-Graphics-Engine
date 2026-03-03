@@ -100,11 +100,11 @@ void DrawObjectEditor(std::vector<Object3D>& objects) {
                 ImGui::DragFloat3("Position / Tick", &objects[selectedIndex].positionPerTick.x, 0.1f);
                 ImGui::DragFloat3("Scale", &objects[selectedIndex].scale.x, 0.1f);
 		ImGui::DragFloat3("FarthestPos", &objects[selectedIndex].farthestPoint.x, 1.0f);
-		if(ImGui::Button("GL_BACK")){objects[selectedIndex].cullingMode = GL_BACK; std::cout << objects[selectedIndex].cullingMode << std::endl;}
-		if(ImGui::Button("GL_FRONT")){objects[selectedIndex].cullingMode = GL_FRONT;std::cout << objects[selectedIndex].cullingMode << std::endl;}
-		if(ImGui::Button("Both")){objects[selectedIndex].cullingMode = GL_FRONT_AND_BACK;std::cout << objects[selectedIndex].cullingMode << std::endl;}
-		if(ImGui::Button("GL_CCW")){objects[selectedIndex].cullingFrontFace = GL_CCW;std::cout << objects[selectedIndex].cullingFrontFace << std::endl;}
-		if(ImGui::Button("GL_CW")){objects[selectedIndex].cullingFrontFace = GL_CW;std::cout << objects[selectedIndex].cullingFrontFace << std::endl;}
+		if(ImGui::Button("GL_BACK")){objects[selectedIndex].cullingMode = GL_BACK;}
+		if(ImGui::Button("GL_FRONT")){objects[selectedIndex].cullingMode = GL_FRONT;}
+		if(ImGui::Button("Both")){objects[selectedIndex].cullingMode = GL_FRONT_AND_BACK;}
+		if(ImGui::Button("GL_CCW")){objects[selectedIndex].cullingFrontFace = GL_CCW;}
+		if(ImGui::Button("GL_CW")){objects[selectedIndex].cullingFrontFace = GL_CW;}
             }
         } else {
             ImGui::Text("No objects available");

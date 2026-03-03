@@ -1,22 +1,158 @@
 [
-  {
-    "arguments": [
-      "/nix/store/r9wbjib6xxjkyb9yvjvrkl4sq61i2lyn-gcc-wrapper-15.2.0/bin/g++",
-      "-Wall",
-      "-Wextra",
-      "-g",
-      "-Iinclude",
-      "-I/nix/store/iv95kv48a8akq8q5bn5gwha5vplpk1f0-sdl3-3.2.28-dev/include",
-      "-I/nix/store/6rdb58ngijcrfmr2m5jzrqjxz8wafsdb-sdl3-ttf-3.2.2/include",
-      "-Iimgui",
-      "-Iimgui/backends",
-      "-c",
-      "-o",
-      "build/main.o",
-      "src/main.cpp"
-    ],
-    "directory": "/home/nils/Docs/3D-Fast-paced-fps",
-    "file": "/home/nils/Docs/3D-Fast-paced-fps/src/main.cpp",
-    "output": "/home/nils/Docs/3D-Fast-paced-fps/build/main.o"
-  }
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_SDL-oGL-basics.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_SDL-oGL-basics.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_SDL-oGL-basics.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_SDL-oGL-basics.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_file-loading.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_file-loading.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_file-loading.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_file-loading.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_full-game-integ-test.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_full-game-integ-test.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_full-game-integ-test.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_full-game-integ-test.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_main.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_main.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_main.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_main.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_math.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_math.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_math.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_math.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_oGL-face-culling.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_oGL-face-culling.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_oGL-face-culling.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_oGL-face-culling.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/TESTS_rendering.cpp.o -c /home/nils/Docs/RIPWAKE/src/TESTS_rendering.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/TESTS_rendering.cpp",
+  "output": "CMakeFiles/app.dir/src/TESTS_rendering.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/editor.cpp.o -c /home/nils/Docs/RIPWAKE/src/editor.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/editor.cpp",
+  "output": "CMakeFiles/app.dir/src/editor.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/frustumCulling.cpp.o -c /home/nils/Docs/RIPWAKE/src/frustumCulling.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/frustumCulling.cpp",
+  "output": "CMakeFiles/app.dir/src/frustumCulling.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/geometry.cpp.o -c /home/nils/Docs/RIPWAKE/src/geometry.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/geometry.cpp",
+  "output": "CMakeFiles/app.dir/src/geometry.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/imgui-gruvbox.cpp.o -c /home/nils/Docs/RIPWAKE/src/imgui-gruvbox.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/imgui-gruvbox.cpp",
+  "output": "CMakeFiles/app.dir/src/imgui-gruvbox.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/main.cpp.o -c /home/nils/Docs/RIPWAKE/src/main.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/main.cpp",
+  "output": "CMakeFiles/app.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/mesh.cpp.o -c /home/nils/Docs/RIPWAKE/src/mesh.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/mesh.cpp",
+  "output": "CMakeFiles/app.dir/src/mesh.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/obj_loader.cpp.o -c /home/nils/Docs/RIPWAKE/src/obj_loader.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/obj_loader.cpp",
+  "output": "CMakeFiles/app.dir/src/obj_loader.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/objdefs.cpp.o -c /home/nils/Docs/RIPWAKE/src/objdefs.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/objdefs.cpp",
+  "output": "CMakeFiles/app.dir/src/objdefs.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/physics_collision.cpp.o -c /home/nils/Docs/RIPWAKE/src/physics_collision.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/physics_collision.cpp",
+  "output": "CMakeFiles/app.dir/src/physics_collision.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/renderer.cpp.o -c /home/nils/Docs/RIPWAKE/src/renderer.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/renderer.cpp",
+  "output": "CMakeFiles/app.dir/src/renderer.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/src/shader-utils.cpp.o -c /home/nils/Docs/RIPWAKE/src/shader-utils.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/src/shader-utils.cpp",
+  "output": "CMakeFiles/app.dir/src/shader-utils.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/imgui.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/imgui.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/imgui.cpp",
+  "output": "CMakeFiles/app.dir/imgui/imgui.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/imgui_demo.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/imgui_demo.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/imgui_demo.cpp",
+  "output": "CMakeFiles/app.dir/imgui/imgui_demo.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/imgui_draw.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/imgui_draw.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/imgui_draw.cpp",
+  "output": "CMakeFiles/app.dir/imgui/imgui_draw.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/imgui_widgets.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/imgui_widgets.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/imgui_widgets.cpp",
+  "output": "CMakeFiles/app.dir/imgui/imgui_widgets.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/imgui_tables.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/imgui_tables.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/imgui_tables.cpp",
+  "output": "CMakeFiles/app.dir/imgui/imgui_tables.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/backends/imgui_impl_sdl3.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/backends/imgui_impl_sdl3.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/backends/imgui_impl_sdl3.cpp",
+  "output": "CMakeFiles/app.dir/imgui/backends/imgui_impl_sdl3.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/backends/imgui_impl_opengl3.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/backends/imgui_impl_opengl3.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/backends/imgui_impl_opengl3.cpp",
+  "output": "CMakeFiles/app.dir/imgui/backends/imgui_impl_opengl3.cpp.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "/nix/store/a245z3cvf9x9sn0xlk6k8j9xhxbhda1z-gcc-wrapper-15.2.0/bin/g++  -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/imgui -I/home/nils/Docs/RIPWAKE/imgui/backends -std=gnu++17 -Wall -Wextra -g -fdiagnostics-color=always -o CMakeFiles/app.dir/imgui/backends/imgui_impl_sdlrenderer3.cpp.o -c /home/nils/Docs/RIPWAKE/imgui/backends/imgui_impl_sdlrenderer3.cpp",
+  "file": "/home/nils/Docs/RIPWAKE/imgui/backends/imgui_impl_sdlrenderer3.cpp",
+  "output": "CMakeFiles/app.dir/imgui/backends/imgui_impl_sdlrenderer3.cpp.o"
+}
 ]

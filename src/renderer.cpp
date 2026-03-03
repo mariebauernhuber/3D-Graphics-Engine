@@ -233,14 +233,3 @@ GLuint LoadTextureFromFile(const char* filename) {
     stbi_image_free(data);
     return tex;
 }
-
-void DebugTransform(Object3D& obj) {
-    auto world = obj.GetWorldMatrix();
-    printf("Obj@(%f,%f,%f) World[3]=(%f,%f,%f)\n", 
-           obj.position.x, obj.position.y, obj.position.z,
-           world.m[0][3], world.m[1][3], world.m[2][3]);
-    
-    glm::mat4 glmWorld = ToGLM(world);
-    printf("GLM World[3]=(%f,%f,%f)\n", 
-           glmWorld[3][0], glmWorld[3][1], glmWorld[3][2]);
-}
