@@ -11,6 +11,7 @@ pkgs.mkShell {
 		glm
 		clang-tools
 		bear
+		ninja
 		imgui
 		catch2
 		cmake

@@ -1,1 +1,20 @@
-build/compile_commands.json
+[
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "gcc -I/home/nils/Docs/RIPWAKE/deps/glad/include -o CMakeFiles/glad.dir/deps/glad/src/glad.c.o -c /home/nils/Docs/RIPWAKE/deps/glad/src/glad.c",
+  "file": "/home/nils/Docs/RIPWAKE/deps/glad/src/glad.c",
+  "output": "/home/nils/Docs/RIPWAKE/build/CMakeFiles/glad.dir/deps/glad/src/glad.c.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "gcc -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/deps/glad/include -o CMakeFiles/RIPWAKE.dir/src/blah.c.o -c /home/nils/Docs/RIPWAKE/src/blah.c",
+  "file": "/home/nils/Docs/RIPWAKE/src/blah.c",
+  "output": "/home/nils/Docs/RIPWAKE/build/CMakeFiles/RIPWAKE.dir/src/blah.c.o"
+},
+{
+  "directory": "/home/nils/Docs/RIPWAKE/build",
+  "command": "gcc -I/home/nils/Docs/RIPWAKE/include -I/home/nils/Docs/RIPWAKE/deps/glad/include -o CMakeFiles/RIPWAKE.dir/src/main.c.o -c /home/nils/Docs/RIPWAKE/src/main.c",
+  "file": "/home/nils/Docs/RIPWAKE/src/main.c",
+  "output": "/home/nils/Docs/RIPWAKE/build/CMakeFiles/RIPWAKE.dir/src/main.c.o"
+}
+]
