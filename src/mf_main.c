@@ -24,10 +24,6 @@ int main(int argc, char *argv[]){
 	glEnable(GL_DEBUG_OUTPUT);
 
 	glewExperimental = GL_TRUE;
-//	if(glewInit() != GLEW_OK){
-//		printf("ERROR: Failed to init GLEW\n");
-//		return 1;
-//	}
 
 	window = SDL_CreateWindow("RipWake", 500, 500, SDL_WINDOW_OPENGL);
 
