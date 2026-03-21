@@ -10,6 +10,7 @@ pkgs.mkShell {
 		glew
 		glm
 		clang-tools
+		gdb
 		bear
 		ninja
 		imgui

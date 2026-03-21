@@ -3,6 +3,7 @@ project(RIPWAKE C)
 
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 
 set(GLAD_DIR ${CMAKE_SOURCE_DIR}/deps/glad)
 add_library(glad ${GLAD_DIR}/src/glad.c)
