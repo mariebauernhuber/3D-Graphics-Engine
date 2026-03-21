@@ -5,10 +5,6 @@ set(CMAKE_C_COMPILER gcc)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 
-set(GLAD_DIR ${CMAKE_SOURCE_DIR}/deps/glad)
-add_library(glad ${GLAD_DIR}/src/glad.c)
-target_include_directories(glad PUBLIC ${GLAD_DIR}/include)
-
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDL3 REQUIRED sdl3)
 find_package(OpenGL REQUIRED)
@@ -25,7 +21,6 @@ target_link_libraries(RIPWAKE ${SDL3_LIBRARIES})
 target_link_libraries(RIPWAKE glfw)
 target_link_libraries(RIPWAKE GLEW)
 target_link_libraries(RIPWAKE OpenGL::GL)
-target_link_libraries(RIPWAKE glad)
 
 add_custom_target(run
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

@@ -72,46 +72,46 @@ int main(int argc, char *argv[]){
 	while(is_running){
 		clrCol.x = clrCol.x + 0.0001f;
 
-	glViewport(0, 0, windowWidth, windowHeight);
+		glViewport(0, 0, windowWidth, windowHeight);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glClearColor(clrCol.x, clrCol.y, clrCol.z, clrCol.w);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glClearColor(clrCol.x, clrCol.y, clrCol.z, clrCol.w);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//if(wireFrameMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//if(wireFrameMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	//if(cullingEnabled) glEnable(GL_CULL_FACE);
+		//if(cullingEnabled) glEnable(GL_CULL_FACE);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
 
-	glUseProgram(screenShaderProgram);
+		glUseProgram(screenShaderProgram);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-	glUniform1i(glGetUniformLocation(screenShaderProgram, "screenTexture"), 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+		glUniform1i(glGetUniformLocation(screenShaderProgram, "screenTexture"), 0);
 
-	glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glBindVertexArray(quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
 
-	//if(glGetError() != 0){
-	//    std::cout << "GLERROR: " << glGetError() << std::endl;
-	//}
+		//if(glGetError() != 0){
+		//    std::cout << "GLERROR: " << glGetError() << std::endl;
+		//}
 
-	// 8. Present final frame
-	SDL_GL_MakeCurrent(window, gl_context);
-	SDL_GL_SwapWindow(window);
+		SDL_GL_MakeCurrent(window, gl_context);
+		SDL_GL_SwapWindow(window);
 
-	if(clrCol.x >=1.0f){ is_running = false; }
-
+		if(clrCol.x >=1.0f){
+			is_running = false;
+		}
 	}
 
 	SDL_Quit();
